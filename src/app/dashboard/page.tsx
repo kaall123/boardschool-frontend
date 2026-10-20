@@ -12,10 +12,10 @@ export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
 
-  // 🟢 State untuk Detail Pengumuman (Modal)
+  // State untuk Detail Pengumuman (Modal)
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<any | null>(null);
 
-  // 🟢 State untuk Custom Modal Konfirmasi (Logout / Hapus)
+  // State untuk Custom Modal Konfirmasi (Logout / Hapus)
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
     title: string;
@@ -39,16 +39,18 @@ export default function DashboardPage() {
       return;
     }
 
-    // Ambil data profil user
-    fetch('https://boardschool-backend-gkin.vercel.app/api/announcements', {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
+
+    // 1. Ambil data profil user menggunakan endpoint /api/auth/me yang benar
+    fetch(`${API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((userData) => setUser(userData))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error('Gagal memuat profil:', err));
 
-    // Ambil daftar pengumuman
-    fetch('https://boardschool-backend-gkin.vercel.app/api/announcements', {
+    // 2. Ambil daftar pengumuman
+    fetch(`${API_URL}/api/announcements`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -57,7 +59,7 @@ export default function DashboardPage() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err);
+        console.error('Gagal memuat pengumuman:', err);
         setLoading(false);
       });
   };
@@ -66,11 +68,13 @@ export default function DashboardPage() {
     fetchAnnouncements();
   }, [router]);
 
-  // Fungsi Eksekusi Hapus
+  // Fungsi Eksekusi Hapus dengan menyertakan ID pada URL
   const executeDelete = async (id: number) => {
     const token = localStorage.getItem('token');
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
+
     try {
-      const res = await fetch(`https://boardschool-backend-gkin.vercel.app/api/announcements`, {
+      const res = await fetch(`${API_URL}/api/announcements/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -153,7 +157,6 @@ export default function DashboardPage() {
         {/* LANDING / BANNER TEMA */}
         <div className="mb-8 p-8 rounded-2xl bg-gradient-to-r from-blue-900/40 shadow-xl relative overflow-hidden">
           <div className="relative z-10">
-            
             <h2 className="text-3xl font-extrabold text-white mt-3">Selamat Datang, {user?.nama || 'Pengguna'}!</h2>
             <p className="text-slate-300 text-sm mt-2 max-w-2xl leading-relaxed">
               Jendela informasi resmi sekolah. Temukan pengumuman penting, jadwal kegiatan, dan update akademik terbaru seputar lingkungan belajar BoardSchool dengan cepat dan transparan.
@@ -208,7 +211,7 @@ export default function DashboardPage() {
               <div 
                 key={item.id} 
                 className="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl flex flex-col justify-between hover:border-blue-500/50 hover:shadow-2xl transition cursor-pointer group"
-                onClick={() => setSelectedAnnouncement(item)} // 🟢 Buka Modal Detail saat Card dipencet
+                onClick={() => setSelectedAnnouncement(item)}
               >
                 <div>
                   <div className="flex justify-between items-center mb-3">
@@ -285,7 +288,7 @@ export default function DashboardPage() {
         <p className="text-slate-500 text-[11px] mt-1">Portal Pengumuman & Informasi Sekolah</p>
       </footer>
 
-      
+      {/* MODAL DETAIL PENGUMUMAN */}
       {selectedAnnouncement && (
         <div 
           className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
@@ -295,7 +298,6 @@ export default function DashboardPage() {
             className="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative my-8"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Tombol Close */}
             <button
               onClick={() => setSelectedAnnouncement(null)}
               className="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-700/50 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center transition"
@@ -303,7 +305,6 @@ export default function DashboardPage() {
               ✕
             </button>
 
-            {/* Kategori & Tanggal */}
             <div className="flex items-center gap-3 mb-3">
               <span className="text-xs text-blue-400 font-medium bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
                 {selectedAnnouncement.kategori || 'Umum'}
@@ -321,7 +322,6 @@ export default function DashboardPage() {
               {selectedAnnouncement.judul}
             </h2>
 
-           
             {selectedAnnouncement.gambar && (
               <div className="mb-6 overflow-hidden rounded-xl border border-slate-700 max-h-96">
                 <img
@@ -332,28 +332,20 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {/* Isi Teks Pengumuman Lengkap */}
             <div className="text-slate-300 text-sm leading-relaxed whitespace-pre-line bg-slate-900/50 p-4 rounded-xl border border-slate-700/50 max-h-60 overflow-y-auto">
               {selectedAnnouncement.isi}
-            </div>
-
-            <div className="mt-6 flex justify-end">
-              
             </div>
           </div>
         </div>
       )}
 
-      
+      {/* MODAL KONFIRMASI (LOGOUT / DELETE) */}
       {modalConfig.isOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-            <div className="flex items-center gap-3 mb-4">
-              
-              <div>git 
-                <h3 className="text-lg font-bold text-white">{modalConfig.title}</h3>
-                <p className="text-xs text-slate-400">Konfirmasi tindakan penting</p>
-              </div>
+            <div className="mb-4">
+              <h3 className="text-lg font-bold text-white">{modalConfig.title}</h3>
+              <p className="text-xs text-slate-400">Konfirmasi tindakan penting</p>
             </div>
 
             <p className="text-slate-300 text-sm leading-relaxed mb-6">

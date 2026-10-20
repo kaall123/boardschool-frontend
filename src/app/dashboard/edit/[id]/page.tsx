@@ -18,7 +18,7 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
   const [error, setError] = useState('');
   const router = useRouter();
 
-  // Ambil data pengumuman yang mau diedit saat halaman pertama kali dibuka
+  // Ambil data pengumuman berdasarkan ID saat halaman pertama kali dibuka
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -26,7 +26,10 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
       return;
     }
 
-    fetch(`https://boardschool-backend-gkin.vercel.app/api/announcements`, {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
+
+    // WAJIB PAKAI /${id} agar backend tahu pengumuman mana yang diambil
+    fetch(`${API_URL}/api/announcements/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
@@ -62,7 +65,10 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
     }
 
     try {
-      const res = await fetch(`https://boardschool-backend-gkin.vercel.app/api/announcements`, {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
+
+      // WAJIB PAKAI /${id} pada method PUT
+      const res = await fetch(`${API_URL}/api/announcements/${id}`, {
         method: 'PUT', 
         headers: {
           Authorization: `Bearer ${token}`,

@@ -26,11 +26,14 @@ export default function ProfilePage() {
 
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
 
-    // MEMANGGIL ENDPOINT API AUTH ME (PROFIL USER)
+    // MEMANGGIL ENDPOINT API AUTH ME UNTUK PROFIL USER
     fetch(`${API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Gagal mengambil data profil');
+        return res.json();
+      })
       .then((data) => {
         setUser(data);
         // Set data awal untuk form edit
