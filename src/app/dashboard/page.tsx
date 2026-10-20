@@ -338,12 +338,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setSelectedAnnouncement(null)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-xs font-semibold transition"
-              >
-                Tutup
-              </button>
+              
             </div>
           </div>
         </div>
