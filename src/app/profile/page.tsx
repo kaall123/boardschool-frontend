@@ -24,7 +24,7 @@ export default function ProfilePage() {
       return;
     }
 
-    fetch('http://localhost:5000/api/auth/me', {
+    fetch('https://boardschool-backend-gkin.vercel.app/api/announcements', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -50,14 +50,16 @@ export default function ProfilePage() {
     const token = localStorage.getItem('token');
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ nama, email, password }),
-      });
+     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
+
+const res = await fetch(`${API_URL}/api/auth/profile`, {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({ nama, email, password }),
+});
 
       const data = await res.json();
 

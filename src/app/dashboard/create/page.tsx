@@ -27,7 +27,7 @@ export default function CreateAnnouncementPage() {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/announcements', {
+      const res = await fetch('https://boardschool-backend-gkin.vercel.app/api/announcements', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

@@ -26,7 +26,7 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
       return;
     }
 
-    fetch(`http://localhost:5000/api/announcements/${id}`, {
+    fetch(`https://boardschool-backend-gkin.vercel.app/api/announcements`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
@@ -62,7 +62,7 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/announcements/${id}`, {
+      const res = await fetch(`https://boardschool-backend-gkin.vercel.app/api/announcements`, {
         method: 'PUT', 
         headers: {
           Authorization: `Bearer ${token}`,

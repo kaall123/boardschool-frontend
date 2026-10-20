@@ -40,7 +40,7 @@ export default function DashboardPage() {
     }
 
     // Ambil data profil user
-    fetch('http://localhost:5000/api/auth/me', {
+    fetch('https://boardschool-backend-gkin.vercel.app/api/announcements', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -48,7 +48,7 @@ export default function DashboardPage() {
       .catch((err) => console.error(err));
 
     // Ambil daftar pengumuman
-    fetch('http://localhost:5000/api/announcements', {
+    fetch('https://boardschool-backend-gkin.vercel.app/api/announcements', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -70,7 +70,7 @@ export default function DashboardPage() {
   const executeDelete = async (id: number) => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://localhost:5000/api/announcements/${id}`, {
+      const res = await fetch(`https://boardschool-backend-gkin.vercel.app/api/announcements`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -350,7 +350,7 @@ export default function DashboardPage() {
           <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
               
-              <div>
+              <div>git 
                 <h3 className="text-lg font-bold text-white">{modalConfig.title}</h3>
                 <p className="text-xs text-slate-400">Konfirmasi tindakan penting</p>
               </div>

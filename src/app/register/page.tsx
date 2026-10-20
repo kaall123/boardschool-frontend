@@ -18,11 +18,13 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nama, email, password, role }),
-      });
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
+
+const res = await fetch(`${API_URL}/api/auth/register`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ nama, email, password, role }),
+});
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Registrasi gagal!');
