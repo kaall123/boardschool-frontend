@@ -24,7 +24,10 @@ export default function ProfilePage() {
       return;
     }
 
-    fetch('https://boardschool-backend-gkin.vercel.app/api/announcements', {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
+
+    // MEMANGGIL ENDPOINT API AUTH ME (PROFIL USER)
+    fetch(`${API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -36,7 +39,7 @@ export default function ProfilePage() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err);
+        console.error('Error fetching profile:', err);
         setLoading(false);
       });
   }, [router]);
@@ -50,16 +53,16 @@ export default function ProfilePage() {
     const token = localStorage.getItem('token');
 
     try {
-     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://boardschool-backend-gkin.vercel.app';
 
-const res = await fetch(`${API_URL}/api/auth/profile`, {
-  method: 'PUT',
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  },
-  body: JSON.stringify({ nama, email, password }),
-});
+      const res = await fetch(`${API_URL}/api/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ nama, email, password }),
+      });
 
       const data = await res.json();
 
@@ -98,8 +101,8 @@ const res = await fetch(`${API_URL}/api/auth/profile`, {
             {user?.nama ? user.nama.charAt(0) : 'U'}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">{user?.nama}</h1>
-            <p className="text-slate-400 text-sm">{user?.email}</p>
+            <h1 className="text-xl font-bold text-white">{user?.nama || 'Nama Tidak Tersedia'}</h1>
+            <p className="text-slate-400 text-sm">{user?.email || 'Email Tidak Tersedia'}</p>
             <span className="inline-block mt-1 text-xs px-2.5 py-0.5 rounded-full font-semibold uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20">
               {user?.role || 'Siswa'}
             </span>
@@ -134,15 +137,15 @@ const res = await fetch(`${API_URL}/api/auth/profile`, {
             <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/60 space-y-3 text-sm">
               <div className="flex justify-between py-1 border-b border-slate-800">
                 <span className="text-slate-400">Nama Lengkap</span>
-                <span className="font-medium text-white">{user?.nama}</span>
+                <span className="font-medium text-white">{user?.nama || '-'}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-800">
                 <span className="text-slate-400">Email Terdaftar</span>
-                <span className="font-medium text-white">{user?.email}</span>
+                <span className="font-medium text-white">{user?.email || '-'}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-800">
                 <span className="text-slate-400">Peran Sistem (Role)</span>
-                <span className="font-medium text-blue-400 uppercase">{user?.role}</span>
+                <span className="font-medium text-blue-400 uppercase">{user?.role || 'SISWA'}</span>
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-slate-400">Status Akun</span>
